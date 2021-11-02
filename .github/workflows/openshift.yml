@@ -37,6 +37,7 @@ env:
   APP_NAME: node-express-app
   SOURCE_DIR: src
   NODE_VERSION: 12
+  OPENSHIFT_NAMESPACE=lab-2part2
 
 on:
   # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
@@ -72,8 +73,8 @@ jobs:
         with:
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
           openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-          insecure_skip_tls_verify: false
-          namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
+          insecure_skip_tls_verify: true
+          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
       - name: Start oc S2I build
         run: |
