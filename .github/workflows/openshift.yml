@@ -37,7 +37,7 @@ env:
   APP_NAME: node-express-app
   SOURCE_DIR: src
   NODE_VERSION: 12
-  OPENSHIFT_NAMESPACE=lab-2part2
+  OPENSHIFT_NAMESPACE: lab-2part2
 
 on:
   # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
