@@ -78,6 +78,5 @@ jobs:
 
       - name: Start oc S2I build
         run: |
-	  echo "You are on `hostname`" | tee -a $GITHUB_ENV
-	  echo "$SHELL" | tee -a $GITHUB_ENV
+	  echo "Test JQ" | tee -a $GITHUB_ENV
           oc start-build ${{ env.APP_NAME }} --from-dir=${{ env.SOURCE_DIR }} --follow
