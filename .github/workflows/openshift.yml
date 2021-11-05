@@ -51,7 +51,7 @@ jobs:
   # Begin installing runner
   install_runner:
     name: Install Private Runner
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
   steps:
     - name: Log in to OpenShift
