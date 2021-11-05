@@ -47,7 +47,7 @@ on:
     # Edit to the branch(es) you want to build and deploy on each push.
     branches: [ lab-2 ]
 #------
-install_runner:
+  install_runner:
   name: Install Private Runner
   runs-on: ubuntu-latest
 
