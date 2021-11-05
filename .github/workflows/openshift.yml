@@ -1,3 +1,15 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+### The OpenShift Starter workflow will:
+# - Checkout your repository
+# - Perform a Docker build
+# - Push the built image to an image registry
+# - Log in to your OpenShift cluster
+# - Create an OpenShift app from the image and expose it to the internet.
+
 ### Before you begin:
 # - Have write access to a container image registry such as quay.io or Dockerhub.
 # - Have access to an OpenShift cluster.
@@ -36,16 +48,35 @@ on:
     branches: [ lab-2 ]
 
 jobs:
-  my-job:
-    name: My Job
+  openshift-ci-cd:
+    name: Build and deploy to OpenShift
     runs-on: ubuntu-latest
+    environment: production
+
     steps:
-      - name: Print a greeting
-        env:
-          MY_VAR: Hi there! My name is
-          FIRST_NAME: Mona
-          MIDDLE_NAME: The
-          LAST_NAME: Octocat
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - run: npm install
+        working-directory: ${{ env.SOURCE_DIR }}
+
+      - run: npm test
+        working-directory: ${{ env.SOURCE_DIR }}
+
+      # https://github.com/redhat-actions/oc-login#readme
+      - name: Log in to OpenShift
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+          insecure_skip_tls_verify: true
+          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+
+      - name: Start oc S2I build
         run: |
-          echo $MY_VAR $FIRST_NAME $MIDDLE_NAME $LAST_NAME.
-          echo I am running in $HOSTNAME
+          echo hello john
+          oc start-build ${{ env.APP_NAME }} --from-dir=${{ env.SOURCE_DIR }} --follow
