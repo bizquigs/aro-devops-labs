@@ -36,14 +36,16 @@ on:
     branches: [ lab-2 ]
 
 jobs:
-  openshift-ci-cd:
-    name: Build and deploy to OpenShift
+  my-job:
+    name: My Job
     runs-on: ubuntu-latest
-    environment: production
-
     steps:
-      - uses: actions/checkout@v2
-      - name: Echo test
-        run: echo Hello JQ. Shell: $SHELL
-
-
+      - name: Print a greeting
+        env:
+          MY_VAR: Hi there! My name is
+          FIRST_NAME: Mona
+          MIDDLE_NAME: The
+          LAST_NAME: Octocat
+        run: |
+          echo $MY_VAR $FIRST_NAME $MIDDLE_NAME $LAST_NAME.
+          #echo I am running in $SHELL
