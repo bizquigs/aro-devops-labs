@@ -44,6 +44,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Echo test
-        run: echo Hello JQ
+        run: echo Hello JQ. Shell: $SHELL
 
 
