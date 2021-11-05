@@ -46,20 +46,45 @@ on:
   push:
     # Edit to the branch(es) you want to build and deploy on each push.
     branches: [ lab-2 ]
+#------
+install_runner:
+  name: Install Private Runner
+  runs-on: ubuntu-latest
 
+  steps:
+    - name: Log in to OpenShift
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+        insecure_skip_tls_verify: true
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+
+    - uses: redhat-actions/openshift-actions-runner-installer@v1
+      with:
+        github_pat: ${{ secrets.GITHUB_PAT }}     # Personal access token with organization permissions
+        runner_location: redhat-actions                               # Install organization level runners
+        #runner_image: quay.io/redhat-github-actions/java-runner-11    # Use our prebuilt Java runner image
+        runner_image: quay.io/redhat-github-actions/node-runner-14
+        runner_labels: openshift, node
+#------
 jobs:
   openshift-ci-cd:
-    name: Build and deploy to OpenShift
-    runs-on: ubuntu-latest
+    name: Build and deploy on Self-Hosted OpenShift Runners
+    runs-on: [ self-hosted, openshift, node ]         # Use the same labels we gave the runner above
+    needs: install_runner                             # Wait until the job above completes
     environment: production
 
+    env:
+      WORKDIR: getting-started
+      
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+#      - name: Setup node
+#        uses: actions/setup-node@v2
+#        with:
+#          node-version: ${{ env.NODE_VERSION }}
 
       - run: npm install
         working-directory: ${{ env.SOURCE_DIR }}
@@ -67,16 +92,15 @@ jobs:
       - run: npm test
         working-directory: ${{ env.SOURCE_DIR }}
 
-      # https://github.com/redhat-actions/oc-login#readme
-      - name: Log in to OpenShift
-        uses: redhat-actions/oc-login@v1
-        with:
-          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-          insecure_skip_tls_verify: true
-          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+#      # https://github.com/redhat-actions/oc-login#readme
+#      - name: Log in to OpenShift
+#        uses: redhat-actions/oc-login@v1
+#        with:
+#          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+#          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+#          insecure_skip_tls_verify: true
+#          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
       - name: Start oc S2I build
         run: |
-          echo hello john $SHELL $HOSTNAME
           oc start-build ${{ env.APP_NAME }} --from-dir=${{ env.SOURCE_DIR }} --follow
