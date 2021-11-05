@@ -78,5 +78,5 @@ jobs:
 
       - name: Start oc S2I build
         run: |
-        echo hello john $SHELL $HOSTNAME
+          echo hello john $SHELL $HOSTNAME
           oc start-build ${{ env.APP_NAME }} --from-dir=${{ env.SOURCE_DIR }} --follow
