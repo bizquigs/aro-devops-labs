@@ -46,9 +46,11 @@ on:
   push:
     # Edit to the branch(es) you want to build and deploy on each push.
     branches: [ lab-2 ]
-#------
+
+jobs:
+  # Begin installing runner
   install_runner:
-  name: Install Private Runner
+    name: Install Private Runner
   runs-on: ubuntu-latest
 
   steps:
@@ -67,8 +69,8 @@ on:
         #runner_image: quay.io/redhat-github-actions/java-runner-11    # Use our prebuilt Java runner image
         runner_image: quay.io/redhat-github-actions/node-runner-14
         runner_labels: openshift, node
-#------
-jobs:
+  # End installing runner
+
   openshift-ci-cd:
     name: Build and deploy on Self-Hosted OpenShift Runners
     runs-on: [ self-hosted, openshift, node ]         # Use the same labels we gave the runner above
