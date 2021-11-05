@@ -78,4 +78,5 @@ jobs:
 
       - name: Start oc S2I build
         run: |
-          oc start-build ${{ env.APP_NAME }} --from-dir=${{ env.SOURCE_DIR }} --follow
+	  echo "Test JQ" | tee -a $GITHUB_ENV
+          #oc start-build ${{ env.APP_NAME }} --from-dir=${{ env.SOURCE_DIR }} --follow
