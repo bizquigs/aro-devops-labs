@@ -53,23 +53,23 @@ jobs:
     name: Install Private Runner
     runs-on: ubuntu-latest
 
-  steps:
-    - name: Log in to OpenShift
-      uses: redhat-actions/oc-login@v1
-      with:
-        openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-        insecure_skip_tls_verify: true
-        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+    steps:
+      - name: Log in to OpenShift
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+          insecure_skip_tls_verify: true
+          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
-    - uses: redhat-actions/openshift-actions-runner-installer@v1
-      with:
-        github_pat: ${{ secrets.GITHUB_PAT }}     # Personal access token with organization permissions
-        runner_location: redhat-actions                               # Install organization level runners
-        #runner_image: quay.io/redhat-github-actions/java-runner-11    # Use our prebuilt Java runner image
-        runner_image: quay.io/redhat-github-actions/node-runner-14
-        runner_labels: openshift, node
-  # End installing runner
+      - uses: redhat-actions/openshift-actions-runner-installer@v1
+        with:
+          github_pat: ${{ secrets.GITHUB_PAT }}     # Personal access token with organization permissions
+          runner_location: redhat-actions                               # Install organization level runners
+          #runner_image: quay.io/redhat-github-actions/java-runner-11    # Use our prebuilt Java runner image
+          runner_image: quay.io/redhat-github-actions/node-runner-14
+          runner_labels: openshift, node
+    # End installing runner
 
   openshift-ci-cd:
     name: Build and deploy on Self-Hosted OpenShift Runners
