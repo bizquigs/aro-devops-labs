@@ -44,12 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: JQ
+    - name: JQ
       run: |
-        echo "JQ HELLO"
-
+        export JQ="$(echo $SHELL)"
+        echo "We are running on $JQ"
