@@ -54,15 +54,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Log in to OpenShift JQ
+      - name: Log in to OpenShift
         uses: redhat-actions/oc-login@v1
         with:
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
           openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
           insecure_skip_tls_verify: true
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
-
-      - uses: redhat-actions/openshift-actions-runner-installer@v1
+      - name: Install runner
+        uses: redhat-actions/openshift-actions-runner-installer@v1
         with:
           github_pat: ${{ secrets.MY_GITHUB_PAT }}     # Personal access token with organization permissions
           runner_location: redhat-actions                               # Install organization level runners
