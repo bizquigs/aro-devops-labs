@@ -54,6 +54,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: PAT Check
+        run: |
+          echo "JQ PAT ${{ secrets.MY_GITHUB_PAT }}"
+
       - name: Log in to OpenShift
         uses: redhat-actions/oc-login@v1
         with:
