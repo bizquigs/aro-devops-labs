@@ -38,6 +38,7 @@ env:
   SOURCE_DIR: src
   NODE_VERSION: 12
   OPENSHIFT_NAMESPACE: lab-2part2
+  TEST: ${{ secrets.MY_GITHUB_PAT }}
 
 on:
   # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
@@ -56,7 +57,7 @@ jobs:
     steps:
       - name: PAT Check
         run: |
-          echo "JQ PAT ${{ secrets.MY_GITHUB_PAT }}"
+          echo "JQ PAT ${{ env.TEST }}"
 
       - name: Log in to OpenShift
         uses: redhat-actions/oc-login@v1
