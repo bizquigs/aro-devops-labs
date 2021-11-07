@@ -64,7 +64,7 @@ jobs:
     name: OpenShift Self Hosted Workflow
     # Add other labels here if you have to filter by a runner type.
     runs-on: [ self-hosted ]
-    needs: install-runner
+    needs: install_runner
 
     steps:
       - run: hostname
