@@ -38,6 +38,7 @@ env:
   SOURCE_DIR: src
   NODE_VERSION: 12
   OPENSHIFT_NAMESPACE: lab-2part2
+  TEST: ${{ secrets.MY_GITHUB_PAT }}
 
 on:
   # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
@@ -50,24 +51,59 @@ on:
 jobs:
   # Begin installing runner
   install_runner:
+    name: Install Private Runner
     runs-on: ubuntu-latest
-    name: Install runner
+
     steps:
-      - name: Checkout action
-        uses: actions/checkout@v2
-      - name: Install self hosted runner into this repository
+      - name: Log in to OpenShift
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+          insecure_skip_tls_verify: true
+          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+      - name: Install runner
         uses: redhat-actions/openshift-actions-runner-installer@v1
         with:
-          github_pat: ${{ secrets.MY_GITHUB_PAT }}
+          github_pat: ${{ secrets.MY_GITHUB_PAT }}     # Personal access token with organization permissions 
+          #runner_location: redhat-actions                               # Install organization level runners
+          #runner_image: quay.io/redhat-github-actions/java-runner-11    # Use our prebuilt Java runner image
+          runner_image: quay.io/redhat-github-actions/node-runner-14
+          runner_labels: openshift, node
+    # End installing runner
 
-  self-hosted-workflow:
-    # Now that the above job has ensured the runner container exists,
-    # we can run our workflow inside it.
-    name: OpenShift Self Hosted Workflow
-    # Add other labels here if you have to filter by a runner type.
-    runs-on: [ self-hosted ]
-    needs: install_runner
+  openshift-ci-cd:
+    name: Build and deploy on Self-Hosted OpenShift Runners
+    runs-on: [ self-hosted, openshift, node ]         # Use the same labels we gave the runner above
+    needs: install_runner                             # Wait until the job above completes
+    environment: production
 
+    env:
+      WORKDIR: getting-started
+      
     steps:
-      - run: hostname
-      - run: ls -Al
+      - uses: actions/checkout@v2
+
+#      - name: Setup node
+#        uses: actions/setup-node@v2
+#        with:
+#          node-version: ${{ env.NODE_VERSION }}
+
+      - run: npm install
+        working-directory: ${{ env.SOURCE_DIR }}
+
+      - run: npm test
+        working-directory: ${{ env.SOURCE_DIR }}
+
+#      # https://github.com/redhat-actions/oc-login#readme
+#      - name: Log in to OpenShift
+#        uses: redhat-actions/oc-login@v1
+#        with:
+#          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+#          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+#          insecure_skip_tls_verify: true
+#          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+
+      - name: Start oc S2I build
+        run: |
+          oc start-build ${{ env.APP_NAME }} --from-dir=${{ env.SOURCE_DIR }} --follow
