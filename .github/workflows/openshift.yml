@@ -84,8 +84,8 @@ jobs:
       - run: npm install
         working-directory: ${{ env.SOURCE_DIR }}
 
-      - run: npm test
-        working-directory: ${{ env.SOURCE_DIR }}
+      #- run: npm test
+      #  working-directory: ${{ env.SOURCE_DIR }}
 
       # https://github.com/redhat-actions/oc-login#readme
       - name: Log in to OpenShift
