@@ -36,7 +36,7 @@ jobs:
           #runner_location: redhat-actions                               # Install organization level runners
           #runner_image: quay.io/redhat-github-actions/java-runner-11    # Use our prebuilt Java runner image
           runner_image: quay.io/redhat-github-actions/node-runner-14
-          runner_labels: openshift, node
+          runner_labels: self-hosted, openshift, node
     # End installing runner
 
   openshift-ci-cd:
