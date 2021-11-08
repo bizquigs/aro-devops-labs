@@ -45,8 +45,8 @@ jobs:
     needs: install_runner                             # Wait until the job above completes
     environment: production
 
-    env:
-      WORKDIR: getting-started
+    #env:
+    #  WORKDIR: getting-started
       
     steps:
       - uses: actions/checkout@v2
